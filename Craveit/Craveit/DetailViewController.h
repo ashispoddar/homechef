@@ -7,8 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+//@interface DetailViewController : UIViewController <UISplitViewControllerDelegate>
 
-@interface DetailViewController : UIViewController <UISplitViewControllerDelegate>
+
+
+@interface DetailViewController : UIViewController <UISplitViewControllerDelegate ,NSURLConnectionDelegate>
+{
+    NSURLConnection* connection;
+    NSMutableData *_responseData;
+}
+
 
 @property (strong, nonatomic) id detailItem;
 
