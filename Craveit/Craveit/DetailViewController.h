@@ -13,8 +13,9 @@
 
 @interface DetailViewController : UIViewController <UISplitViewControllerDelegate ,NSURLConnectionDelegate>
 {
-    NSURLConnection* connection;
+    NSURLConnection* _connection;
     NSMutableData *_responseData;
+    NSInteger _responseStatus;
 }
 
 

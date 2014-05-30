@@ -48,7 +48,7 @@
     
     
     //load the chefs details here
-    NSString *restCallString = @"http://ec2-54-183-28-243.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs";
+    NSString *restCallString = @"http://ec2-54-183-28-243.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs/400";
     
     NSURL *restURL = [NSURL URLWithString:restCallString];
     NSURLRequest* request = [NSURLRequest requestWithURL:restURL];
@@ -113,6 +113,13 @@
     // so that we can append data to it in the didReceiveData method
     // Furthermore, this method is called each time there is a redirect so reinitializing it
     // also serves to clear it
+    
+    if ([response isKindOfClass: [NSHTTPURLResponse class]]) {
+        _responseStatus = [(NSHTTPURLResponse*) response statusCode];
+    }
+
+    NSLog(@"%s: connection didReceiveData , status code=%ld",__FUNCTION__,(long)_responseStatus);
+    
     _responseData = [[NSMutableData alloc] init];
 }
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -131,23 +138,59 @@
         if(!dictionary) {
             NSLog(@"%s: JSONObjectWithData error = %@,data = %@",__FUNCTION__,parseError,_responseData);
         }
-        NSArray* chefs = dictionary[@"chefs"];
-        if(chefs) {
-            NSUInteger index = 0;
-            for(NSDictionary* chef in chefs)
-            {
-                NSLog(@"-----");
-                NSString* chefName = chef[@"name"];
-                NSLog(@"Name:%@",chef[@"name"]);
-                NSLog(@"Address:%@",chef[@"address"][@"address1"]);
+        if(_responseStatus == 200) {
+            NSArray* chefs = dictionary[@"chefs"];
+            if(chefs) {
+                for(NSDictionary* chef in chefs)
+                {
+                    NSLog(@"-----");
+                    NSLog(@"Name:%@",chef[@"name"]);
+                    NSLog(@"Address:%@",chef[@"address"][@"address1"]);
+                }
             }
-        }
-
-    }
+        }else if(_responseStatus >= 400) {
+            
+            NSUInteger errorCode = dictionary[@"errorCode"];
+            NSString* errorDesc = dictionary[@"errorDesc"];
+            NSUInteger correlationId = dictionary[@"correlationId"];
+            NSString* debugMsg =dictionary[@"debugMsg"];
+            
+            NSLog(@"-----");
+            NSLog(@"errorCode:%@",(long)errorCode);
+            NSLog(@"errorDesc:%@",errorDesc);
+            
+            
+            NSString *titleString = @"App Internal Error:";
+            NSString *messageString = [NSString stringWithFormat:@"%@. %@", errorDesc, debugMsg];
+            
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:titleString
+                                                                message:messageString delegate:self
+                                                      cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
+            [alertView show];
+            
+            
+            
+        }//end else
+    }// response data
 }
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     // The request has failed for some reason!
     // Check the error var
+    NSLog(@"%s: didFailWithError error = %@",__FUNCTION__,error);
+    
+    NSString *titleString = @"Apologies ! App cannot connect to server.";
+    NSString *messageString = [error localizedDescription];
+    NSString *moreString = [error localizedFailureReason] ?
+    [error localizedFailureReason] :
+    NSLocalizedString(@"Please try again later.", nil);
+    messageString = [NSString stringWithFormat:@"%@. %@", messageString, moreString];
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:titleString
+                                                        message:messageString delegate:self
+                                              cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
+    [alertView show];
+    
+    
 }
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection
                   willCacheResponse:(NSCachedURLResponse*)cachedResponse {
