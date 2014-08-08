@@ -8,12 +8,27 @@
 
 #import "DetailViewController.h"
 
+
+
 @interface DetailViewController ()
+@property (strong, nonatomic) IBOutlet UIImageView *foodItemView;
+@property (strong, nonatomic) IBOutlet UILabel *chefRating;
+@property (strong, nonatomic) IBOutlet UILabel *chefLikes;
+@property (strong, nonatomic) IBOutlet UILabel *chefSpeciality;
+@property (strong, nonatomic) IBOutlet UILabel *chefWorkDistance;
+
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
 @end
 
+
+
 @implementation DetailViewController
+@synthesize foodItemView;
+@synthesize chefRating;
+@synthesize chefLikes;
+@synthesize chefSpeciality;
+@synthesize chefWorkDistance;
 
 #pragma mark - Managing the detail item
 
@@ -38,6 +53,20 @@
     if (self.detailItem) {
         self.detailDescriptionLabel.text = [self.detailItem description];
     }
+    NSMutableArray *imagesArr = [[NSMutableArray alloc] init];
+    assert(imagesArr);
+    
+    [imagesArr addObject:[UIImage imageNamed: @"patishapta.jpg"]];
+    [imagesArr addObject:[UIImage imageNamed: @"chanar_jilepi.jpg"]];
+    [imagesArr addObject:[UIImage imageNamed: @"jivegaja.jpg"]];
+    [imagesArr addObject:[UIImage imageNamed: @"khirkadam.jpg"]];
+    [imagesArr addObject:[UIImage imageNamed: @"misti_singara.jpg"]];
+    [imagesArr addObject:[UIImage imageNamed: @"rajbhog.jpg"]];
+    
+    foodItemView.animationImages = imagesArr;
+    [foodItemView setAnimationRepeatCount:HUGE_VALF];
+    foodItemView.animationDuration = 15.0;
+    [foodItemView startAnimating];
 }
 
 - (void)viewDidLoad
@@ -46,10 +75,17 @@
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
     
-    NSString *restCallString = @"http://ec2-54-183-7-127.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs/400";
+    NSString * chefName = [self.detailItem description];
+    assert(chefName != nil);
+    
+    NSString *chefId = [chefName stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+    assert(chefId != nil);
+    
+    //TODO:AP: make it real REST by using path variables not query param
+    NSString *urlString = [NSString stringWithFormat:@"http://ec2-54-183-7-127.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs/%@" ,chefId];
 
     
-    NSURL *restURL = [NSURL URLWithString:restCallString];
+    NSURL *restURL = [NSURL URLWithString:urlString];
     NSURLRequest* request = [NSURLRequest requestWithURL:restURL];
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 
@@ -96,9 +132,7 @@
     [_responseData appendData:data];
 }
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    // The request is complete and data has been received
-    // You can parse the stuff in your instance variable now
-    
+   
     if(_responseData) {
         
         NSError* parseError = nil;
@@ -107,13 +141,29 @@
             NSLog(@"%s: JSONObjectWithData error = %@,data = %@",__FUNCTION__,parseError,_responseData);
         }
         if(_responseStatus == 200) {
-            NSArray* chefs = dictionary[@"chefs"];
-            if(chefs) {
-                for(NSDictionary* chef in chefs)
+            
+            NSString *rating = [NSString stringWithFormat:@"%@",dictionary[@"rating"]];
+            NSString *likes = [NSString stringWithFormat:@"%@",dictionary[@"like"]];
+            
+            NSString *speciality = [[NSString alloc] initWithString:dictionary[@"speciality"]];
+           
+            [chefRating setText:rating];
+            [chefLikes setText:likes];
+            [chefSpeciality setText:speciality];
+            //TODO:AP : need to calculate distance for user's current location
+            //should be done back in server.
+            [chefWorkDistance setText:@"1.2 miles"];
+        
+            //add items images and text embeded in the control
+            //should we subclass the UIImageView here with data ?
+            NSArray *items = dictionary[@"items"];
+            if(items) {
+                for(NSDictionary* item in items)
                 {
                     NSLog(@"-----");
-                    NSLog(@"Name:%@",chef[@"name"]);
-                    NSLog(@"Address:%@",chef[@"address"][@"address1"]);
+                    NSLog(@"Name:%@",item[@"name"]);
+                    NSLog(@"Address:%@",item[@"price"]);
+                    NSLog(@"Available:%@",item[@"available"]);
                 }
             }
         }else if(_responseStatus >= 400) {
@@ -136,9 +186,7 @@
                                                       cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
             [alertView show];
             
-            
-            
-        }//end else
+            }//end else
     }// response data
 }
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {

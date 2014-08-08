@@ -126,8 +126,6 @@
             index++;
             
             //read the address and seach for user, if find match , make them bold
-            // Fetch the address book
-            // Search for the person named "Appleseed" in the address book
             NSArray *people = (__bridge NSArray *)ABAddressBookCopyPeopleWithName(addressBook, (__bridge CFStringRef)chefName);
             if(people == nil || people.count <= 0){
                 
@@ -255,9 +253,9 @@
         //create the record.
         ABRecordRef chef = ABPersonCreate();
         
-        if(firstName != nil)
+        if(firstName)
             ABRecordSetValue(chef, kABPersonFirstNameProperty, (__bridge CFStringRef)firstName, nil);
-        if(lastName != nil)
+        if(lastName)
             ABRecordSetValue(chef, kABPersonLastNameProperty, (__bridge CFStringRef)lastName, nil);
         
         if(firstName != nil) {
