@@ -7,8 +7,27 @@
 //
 
 #import "MasterViewController.h"
-
 #import "DetailViewController.h"
+#import <AddressBook/AddressBook.h>
+
+#import <objc/runtime.h>
+
+@interface UIAlertView (Private)
+@property (nonatomic, strong) id context;
+@end
+
+@implementation UIAlertView (Private)
+@dynamic context;
+-(void)setContext:(id)context {
+    objc_setAssociatedObject(self, @selector(context), context, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+-(id)context {
+    return objc_getAssociatedObject(self, @selector(context));
+}
+@end
+
+
+
 
 @interface MasterViewController () {
     NSMutableArray *_objects;
@@ -29,6 +48,31 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //okay chefs are loaded, check whether any of them are in your contact book and then set the flag
+    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
+        ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted){
+        NSLog(@"Denied");
+    } else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized){
+        NSLog(@"Authorized");
+    } else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusNotDetermined) {
+        NSLog(@"Not determined");
+    }else {
+        NSLog(@"Unknown");
+    }
+    //lets' ask permission
+    ABAddressBookRequestAccessWithCompletion(
+        ABAddressBookCreateWithOptions(NULL, nil), ^(bool granted, CFErrorRef error) {
+        if (!granted){
+            NSLog(@"Just denied");
+            return;
+        }
+        NSLog(@"Just authorized");
+    });
+    //create a reference of address books to be used down below
+    CFErrorRef *error1 = nil;
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, error1);
+                                             
 	// Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
@@ -37,7 +81,7 @@
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     //load the chefs details here
-    NSString *restCallString = @"http://ec2-54-183-28-243.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs";
+    NSString *restCallString = @"http://ec2-54-183-7-127.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs";
     
     NSURL *restURL = [NSURL URLWithString:restCallString];
     NSURLRequest* request = [NSURLRequest requestWithURL:restURL];
@@ -69,6 +113,9 @@
             NSString* chefName = chef[@"name"];
             NSLog(@"Name:%@",chef[@"name"]);
             NSLog(@"Address:%@",chef[@"address"][@"address1"]);
+            NSLog(@"Address.City:%@",chef[@"address"][@"city"]);
+            NSLog(@"Address.State:%@",chef[@"address"][@"state"]);
+            NSLog(@"Address.Zip:%@",chef[@"address"][@"zip"]);
             
             if(!_objects) {
                 _objects = [[NSMutableArray alloc] init];
@@ -77,8 +124,27 @@
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             index++;
+            
+            //read the address and seach for user, if find match , make them bold
+            // Fetch the address book
+            // Search for the person named "Appleseed" in the address book
+            NSArray *people = (__bridge NSArray *)ABAddressBookCopyPeopleWithName(addressBook, (__bridge CFStringRef)chefName);
+            if(people == nil || people.count <= 0){
+                
+                NSString * message = [NSString stringWithFormat:@"Would you like to add '%@' to your Contact ?", chefName];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Contact"
+                                        message:message
+                                        delegate:self
+                                        cancelButtonTitle:@"Cancel"
+                                        otherButtonTitles:nil];
+                [alert setContext:chefName];
+                [alert addButtonWithTitle:@"Yes"];
+                [alert show];
+            }
         }
+        CFRelease(addressBook);
     }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -166,6 +232,40 @@
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         NSDate *object = _objects[indexPath.row];
         [[segue destinationViewController] setDetailItem:object];
+    }
+}
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+        
+        NSString *chefName = [alertView context];
+        NSLog(@"Adding to Contacts, Chef=%@",chefName);
+        
+        NSArray *tokens = [chefName componentsSeparatedByString:@" "];
+        
+        NSString *firstName =nil;
+        NSString *lastName = nil;
+        
+        if(tokens.count > 1) {
+            firstName = tokens[0];
+            lastName= tokens[1];
+        }else {
+            firstName = chefName;
+        }
+        
+        //create the record.
+        ABRecordRef chef = ABPersonCreate();
+        
+        if(firstName != nil)
+            ABRecordSetValue(chef, kABPersonFirstNameProperty, (__bridge CFStringRef)firstName, nil);
+        if(lastName != nil)
+            ABRecordSetValue(chef, kABPersonLastNameProperty, (__bridge CFStringRef)lastName, nil);
+        
+        if(firstName != nil) {
+            ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
+            ABAddressBookAddRecord(addressBookRef, chef, nil);
+            ABAddressBookSave(addressBookRef, nil);
+        }
+        
     }
 }
 

@@ -46,45 +46,13 @@
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
     
-    
-    //load the chefs details here
-    NSString *restCallString = @"http://ec2-54-183-28-243.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs/400";
+    NSString *restCallString = @"http://ec2-54-183-7-127.us-west-1.compute.amazonaws.com:7878/foodliciouzz/chefs/400";
+
     
     NSURL *restURL = [NSURL URLWithString:restCallString];
     NSURLRequest* request = [NSURLRequest requestWithURL:restURL];
-    NSURLResponse* response = nil;
-    NSError* errors = nil;
-    
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-    /*
-    NSData* data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&errors];
-    if(!data) {
-        NSLog(@"%s:sendSynchronousRequest error:%@",__FUNCTION__,errors);
-        return;
-    }
-    else if( [response isKindOfClass:[NSHTTPURLResponse class]]) {
-        NSInteger httpStatus = [(NSHTTPURLResponse *)response statusCode];
-        if(httpStatus != 200) {
-            NSLog(@"%s: sendSynchronousRequest != 200 , response=%@",__FUNCTION__, response);
-        }
-    }
-    NSError* parseError = nil;
-    NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
-    if(!dictionary) {
-        NSLog(@"%s: JSONObjectWithData error = %@,data = %@",__FUNCTION__,parseError,data);
-    }
-    NSArray* chefs = dictionary[@"chefs"];
-    if(chefs) {
-        NSUInteger index = 0;
-        for(NSDictionary* chef in chefs)
-        {
-            NSLog(@"-----");
-            NSString* chefName = chef[@"name"];
-            NSLog(@"Name:%@",chef[@"name"]);
-            NSLog(@"Address:%@",chef[@"address"][@"address1"]);
-        }
-    }
-    */
+
 }
 
 - (void)didReceiveMemoryWarning
