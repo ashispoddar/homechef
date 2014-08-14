@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B92E4A54199C7ABE001F2BA5 /* chanar_jilepi.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B92E4A4E199C7ABE001F2BA5 /* chanar_jilepi.jpg */; };
+		B92E4A55199C7ABE001F2BA5 /* jivegaja.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B92E4A4F199C7ABE001F2BA5 /* jivegaja.jpg */; };
+		B92E4A56199C7ABE001F2BA5 /* khirkadam.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B92E4A50199C7ABE001F2BA5 /* khirkadam.jpg */; };
+		B92E4A57199C7ABE001F2BA5 /* misti_singara.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B92E4A51199C7ABE001F2BA5 /* misti_singara.jpg */; };
+		B92E4A58199C7ABE001F2BA5 /* patishapta.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B92E4A52199C7ABE001F2BA5 /* patishapta.jpg */; };
+		B92E4A59199C7ABE001F2BA5 /* rajbhog.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B92E4A53199C7ABE001F2BA5 /* rajbhog.jpg */; };
 		B965568D1937070000FE731D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B965568C1937070000FE731D /* MapKit.framework */; };
 		B9CBF97D1936955800EEAF0F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CBF97C1936955800EEAF0F /* Foundation.framework */; };
 		B9CBF97F1936955800EEAF0F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CBF97E1936955800EEAF0F /* CoreGraphics.framework */; };
@@ -37,6 +43,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B92E4A4E199C7ABE001F2BA5 /* chanar_jilepi.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chanar_jilepi.jpg; sourceTree = "<group>"; };
+		B92E4A4F199C7ABE001F2BA5 /* jivegaja.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jivegaja.jpg; sourceTree = "<group>"; };
+		B92E4A50199C7ABE001F2BA5 /* khirkadam.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = khirkadam.jpg; sourceTree = "<group>"; };
+		B92E4A51199C7ABE001F2BA5 /* misti_singara.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = misti_singara.jpg; sourceTree = "<group>"; };
+		B92E4A52199C7ABE001F2BA5 /* patishapta.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = patishapta.jpg; sourceTree = "<group>"; };
+		B92E4A53199C7ABE001F2BA5 /* rajbhog.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = rajbhog.jpg; sourceTree = "<group>"; };
 		B965568C1937070000FE731D /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		B9CBF9791936955800EEAF0F /* Craveit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Craveit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9CBF97C1936955800EEAF0F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -87,6 +99,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B92E4A4D199C7ABE001F2BA5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B92E4A4E199C7ABE001F2BA5 /* chanar_jilepi.jpg */,
+				B92E4A4F199C7ABE001F2BA5 /* jivegaja.jpg */,
+				B92E4A50199C7ABE001F2BA5 /* khirkadam.jpg */,
+				B92E4A51199C7ABE001F2BA5 /* misti_singara.jpg */,
+				B92E4A52199C7ABE001F2BA5 /* patishapta.jpg */,
+				B92E4A53199C7ABE001F2BA5 /* rajbhog.jpg */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		B9CBF9701936955800EEAF0F = {
 			isa = PBXGroup;
 			children = (
@@ -121,6 +146,7 @@
 		B9CBF9821936955800EEAF0F /* Craveit */ = {
 			isa = PBXGroup;
 			children = (
+				B92E4A4D199C7ABE001F2BA5 /* Resources */,
 				B9CBF98B1936955800EEAF0F /* AppDelegate.h */,
 				B9CBF98C1936955800EEAF0F /* AppDelegate.m */,
 				B9CBF98E1936955800EEAF0F /* Main_iPhone.storyboard */,
@@ -247,10 +273,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B92E4A56199C7ABE001F2BA5 /* khirkadam.jpg in Resources */,
 				B9CBF9931936955800EEAF0F /* Main_iPad.storyboard in Resources */,
+				B92E4A57199C7ABE001F2BA5 /* misti_singara.jpg in Resources */,
+				B92E4A59199C7ABE001F2BA5 /* rajbhog.jpg in Resources */,
+				B92E4A54199C7ABE001F2BA5 /* chanar_jilepi.jpg in Resources */,
+				B92E4A55199C7ABE001F2BA5 /* jivegaja.jpg in Resources */,
 				B9CBF99B1936955800EEAF0F /* Images.xcassets in Resources */,
 				B9CBF9901936955800EEAF0F /* Main_iPhone.storyboard in Resources */,
 				B9CBF9871936955800EEAF0F /* InfoPlist.strings in Resources */,
+				B92E4A58199C7ABE001F2BA5 /* patishapta.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
